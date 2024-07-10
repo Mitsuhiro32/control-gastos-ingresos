@@ -1,4 +1,4 @@
-const Usuario = require('../modelos/usuario.model');
+const Usuario = require('../models/gasto.model');
 
 // Obtener todos los usuarios
 module.exports.findAllUsuarios = (req, res) => {
@@ -24,14 +24,14 @@ module.exports.createUsuario = (req, res) => {
 // Agregar un ingreso a un usuario
 module.exports.addIngresoToUsuario = async (req, res) => {
     const usuarioId = req.params.id;
-    const { tipo, cantidad, fecha, descripcion } = req.body;
+    const { categoria, cantidad, fecha, descripcion } = req.body;
 
     try {
         const usuario = await Usuario.findById(usuarioId);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario not found' });
         }
-        const newIngreso = { tipo, cantidad, fecha, descripcion };
+        const newIngreso = { categoria, cantidad, fecha, descripcion };
         usuario.ingresos.push(newIngreso);
         await usuario.save();
         res.json({ usuario });
@@ -43,14 +43,14 @@ module.exports.addIngresoToUsuario = async (req, res) => {
 // Agregar un gasto a un usuario
 module.exports.addGastoToUsuario = async (req, res) => {
     const usuarioId = req.params.id;
-    const { tipo, cantidad, fecha, descripcion } = req.body;
+    const { categoria, cantidad, fecha, descripcion } = req.body;
 
     try {
         const usuario = await Usuario.findById(usuarioId);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario not found' });
         }
-        const newGasto = { tipo, cantidad, fecha, descripcion };
+        const newGasto = { categoria, cantidad, fecha, descripcion };
         usuario.gastos.push(newGasto);
         await usuario.save();
         res.json({ usuario });
@@ -62,14 +62,14 @@ module.exports.addGastoToUsuario = async (req, res) => {
 // Configurar alarmas de un usuario
 module.exports.addAlarmaToUsuario = async (req, res) => {
     const usuarioId = req.params.id;
-    const { tipo, monto, mensaje } = req.body;
+    const { tipo, categoria, monto, mensaje } = req.body;
 
     try {
         const usuario = await Usuario.findById(usuarioId);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario not found' });
         }
-        const newAlarma = { tipo, monto, mensaje };
+        const newAlarma = { tipo, categoria, monto, mensaje };
         usuario.alarmas.push(newAlarma);
 
         await usuario.save();

@@ -1,20 +1,20 @@
-const UsuarioController = require('./controller/gasto.controller');
+const UsuarioController = require('../controller/gasto.controller');
 
 module.exports = function (app) {
     // Rutas para usuarios
-    app.get('/usuarios', usuarioController.findAllUsuarios);
-    app.get('/usuarios/:id', usuarioController.findOneUsuario);
-    app.post('/usuarios', usuarioController.createUsuario);
-    app.delete('/usuarios/:id', usuarioController.deleteUsuario);
+    app.get('/usuarios', UsuarioController.findAllUsuarios);
+    app.get('/usuarios/:id', UsuarioController.findOneUsuario);
+    app.post('/usuarios', UsuarioController.createUsuario);
+    app.delete('/usuarios/:id', UsuarioController.deleteUsuario);
 
     // Rutas para ingresos
-    app.post('/usuarios/:id/ingresos', usuarioController.addIngresoToUsuario);
-    app.get('/usuarios/:id/ingresos', usuarioController.findAllIngresos);
+    app.post('/usuarios/:id/ingresos', UsuarioController.addIngresoToUsuario);
+    app.get('/usuarios/:id/ingresos', UsuarioController.findAllIngresos);
 
     // Rutas para gastos
-    app.post('/usuarios/:id/gastos', usuarioController.addGastoToUsuario);
-    app.get('/usuarios/:id/gastos', usuarioController.findAllGastos);
+    app.post('/usuarios/:id/gastos', UsuarioController.addGastoToUsuario);
+    app.get('/usuarios/:id/gastos', UsuarioController.findAllGastos);
 
     // Rutas para alarmas
-    app.post('/usuarios/:id/alarmas', usuarioController.addAlarmaToUsuario);
+    app.post('/usuarios/:id/alarmas', UsuarioController.addAlarmaToUsuario);
 }
