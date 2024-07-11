@@ -14,7 +14,7 @@ const Ingresos = () => {
                             <CFormSelect
                                 label="Seleccionar Categoría: "
                                 options={[
-                                    'Ubicación de gastos',
+                                    'Ubicación de ingresos',
                                     { value: 'alimentacion', label: 'Alimentación' },
                                     { value: 'transporte', label: 'Transporte' },
                                     { value: 'salud', label: 'Salud' },

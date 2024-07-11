@@ -2,7 +2,9 @@ import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Gastos = React.lazy(() => import('./views/gastos/Gastos'))
+const RegistrarGastos = React.lazy(() => import('./views/gastos/RegistrarGastos'))
 const Ingresos = React.lazy(() => import('./views/ingresos/Ingresos'))
+const RegistrarIngresos = React.lazy(() => import('./views/ingresos/RegistrarIngresos'))
 
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
@@ -55,7 +57,9 @@ const routes = [
   { path: '/', exact: true, name: 'Home'},
   { path: '/dashboard', name: 'Home', element: Dashboard },
   { path: '/gastos/inicio', name: 'Gastos', element: Gastos },
-  { path: '/ingresos/inicio', name: 'Ingresos', element: Ingresos},
+  { path: '/gastos/registrar', name: 'Registrar Gastos', element: RegistrarGastos },
+  { path: '/ingresos/inicio', name: 'Ingresos', element: Ingresos },
+  { path: '/ingresos/registrar', name: 'Registrar Ingresos', element: RegistrarIngresos},
   { path: '/base', name: 'Base', element: Cards, exact: true },
   { path: '/base/accordion', name: 'Accordion', element: Accordion },
   { path: '/base/breadcrumbs', name: 'Breadcrumbs', element: Breadcrumbs },
