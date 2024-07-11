@@ -1,24 +1,18 @@
-// server/index.js
-
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors'); // Importa el middleware CORS
-const gastoRoutes = require('./routes/gasto.routes');
-const authRoutes = require('./routes/auth.routes'); // Importa las rutas de autenticación
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const RutasGastos = require("./routes/gasto.routes");
+const authRoutes = require('./routes/auth.routes');
+const PORT = process.env.PORT || "8000";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-mongoose.connect('mongodb://localhost:27017/myapp', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+require("./config/mongoose.config");
 
-app.use(express.json());
-app.use(cors()); // Habilita CORS para todas las solicitudes
-app.use('/api/gastos', gastoRoutes);
-app.use('/api/auth', authRoutes); // Usa las rutas de autenticación
+app.use(express.json(), express.urlencoded({ extended: true }));
+app.use(cors());
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+RutasGastos(app);
+
+app.listen(8000, () => console.log(`El servidor está encendido en el puerto ${PORT}`));
+
