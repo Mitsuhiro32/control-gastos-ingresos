@@ -1,18 +1,18 @@
-import { AppContent, AppSidebar, AppHeader } from '../components/index'
+// client/src/layout/DefaultLayout.js
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+
+// Views
+const Dashboard = React.lazy(() => import('../views/dashboard/Dashboard'));
+const Profile = React.lazy(() => import('../views/pages/Profile'));
 
 const DefaultLayout = () => {
   return (
-    <div>
-      <AppSidebar />
-      <div className="wrapper d-flex flex-column min-vh-100">
-        <AppHeader />
-        <div className="body flex-grow-1">
-          <AppContent />
-        </div>
-        {/* <AppFooter /> */}
-      </div>
-    </div>
-  )
-}
+    <Routes>
+      <Route exact path="/" element={<Dashboard />} />
+      <Route exact path="/profile" element={<Profile />} />
+    </Routes>
+  );
+};
 
-export default DefaultLayout
+export default DefaultLayout;
