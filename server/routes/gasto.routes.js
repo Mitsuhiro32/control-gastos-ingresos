@@ -15,6 +15,11 @@ module.exports = function (app) {
     app.post('/usuarios/:id/gastos', UsuarioController.addGastoToUsuario);
     app.get('/usuarios/:id/gastos', UsuarioController.findAllGastos);
 
+    // Rutas para categorías
+    app.post('/usuarios/:id/categorias', UsuarioController.addCategoriaToUsuario);
+    app.get('/usuarios/:id/categorias', UsuarioController.findCategoriasByUsuarioIncludingPredefinidas);
+    app.get('/categorias', UsuarioController.findAllCategorias);
+
     // Rutas para alarmas
     app.post('/usuarios/:id/alarmas', UsuarioController.addAlarmaToUsuario);
 }

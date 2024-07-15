@@ -2,14 +2,14 @@
 
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User'); // Asegúrate de tener el modelo de usuario
+const {Usuario} = require('../models/gasto.model');
 
 // Ruta para registrar un usuario
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
         // Validar y crear el usuario en la base de datos
-        const newUser = new User({ username, email, password });
+        const newUser = new Usuario({ username, email, password });
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
