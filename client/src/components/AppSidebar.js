@@ -5,9 +5,7 @@ import {
   CCloseButton,
   CSidebar,
   CSidebarBrand,
-  CSidebarFooter,
   CSidebarHeader,
-  CSidebarToggler,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
@@ -47,11 +45,11 @@ const AppSidebar = () => {
         />
       </CSidebarHeader>
       <AppSidebarNav items={navigation} />
-      <CSidebarFooter className="border-top d-none d-lg-flex">
+      {/* <CSidebarFooter className="border-top d-none d-lg-flex">
         <CSidebarToggler
           onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
         />
-      </CSidebarFooter>
+      </CSidebarFooter> */}
     </CSidebar>
   )
 }

@@ -1,4 +1,4 @@
-const Usuario = require('../models/gasto.model');
+const {Usuario, Categoria} = require('../models/gasto.model');
 
 // Obtener todos los usuarios
 module.exports.findAllUsuarios = (req, res) => {
@@ -19,6 +19,56 @@ module.exports.createUsuario = (req, res) => {
     Usuario.create(req.body)
         .then(newUsuario => res.json({ usuario: newUsuario }))
         .catch(err => res.json({ message: 'Something went wrong', error: err }));
+};
+
+// !Obtener las categorías predefinidas
+module.exports.findAllCategorias = async (req, res) => {
+    try {
+        const categorias = await Categoria.find();
+        res.json({ categorias });
+    } catch (error) {
+        res.json({ message: 'Something went wrong', error });
+    }
+};
+
+// Obtener las categorías de un usuario por ID
+module.exports.findCategoriasByUsuarioIncludingPredefinidas = async (req, res) => {
+    const usuarioId = req.params.id;
+
+    try {
+        const usuario = await Usuario.findById(usuarioId);
+        const categoriasPredefinidas = await Categoria.find(); // Obtener las categorías predefinidas
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario not found' });
+        }
+
+        const categoriasDelUsuario = usuario.categoriasPersonalizadas;
+        const todasLasCategorias = [...categoriasPredefinidas, ...categoriasDelUsuario];
+
+        res.json({ categorias: todasLasCategorias });
+    } catch (error) {
+        res.json({ message: 'Something went wrong', error });
+    }
+};
+
+// Agregar una categoría a un usuario
+module.exports.addCategoriaToUsuario = async (req, res) => {
+    const usuarioId = req.params.id;
+    const { nombre, tipo } = req.body;
+
+    try {
+        const usuario = await Usuario.findById(usuarioId);
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario not found' });
+        }
+        const newCategoria = { nombre, tipo };
+        usuario.categoriasPersonalizadas.push(newCategoria);
+        await usuario.save();
+        res.json({ usuario });
+    } catch (error) {
+        res.json({ message: 'Something went wrong', error });
+    }
 };
 
 // Agregar un ingreso a un usuario

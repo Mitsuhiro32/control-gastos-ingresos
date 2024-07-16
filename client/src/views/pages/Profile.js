@@ -1,5 +1,5 @@
 // client/src/views/pages/Profile.js
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getCurrentUser } from '../../services/authService';
 
 const Profile = () => {

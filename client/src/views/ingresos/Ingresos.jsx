@@ -14,7 +14,7 @@ const Ingresos = () => {
                             <CFormSelect
                                 label="Seleccionar Categoría: "
                                 options={[
-                                    'Ubicación de gastos',
+                                    'Ubicación de ingresos',
                                     { value: 'alimentacion', label: 'Alimentación' },
                                     { value: 'transporte', label: 'Transporte' },
                                     { value: 'salud', label: 'Salud' },
@@ -34,11 +34,11 @@ const Ingresos = () => {
                                 <CCardBody>
                                     <CChartLine
                                         data={{
-                                            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
+                                            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
                                             datasets: [
                                                 {
                                                     label: 'Ingresos',
-                                                    data: [40, 20, 12, 39, 10, 40, 39, 80, 40],
+                                                    data: [4000000, 2000000, 1200000, 3900000, 1000000, 4000000, 3900000, 8000000, 4000000, 2000000, 1200000, 3900000],
                                                     backgroundColor: 'rgba(0, 128, 0, 0.2)',
                                                     borderColor: 'rgba(0, 128, 0, 1)',
                                                     pointBackgroundColor: 'rgba(0, 128, 0, 1)',
@@ -53,12 +53,12 @@ const Ingresos = () => {
                                 <CCardBody>
                                     <CChartPie
                                         data={{
-                                            labels: ['Efectivo', 'Cuenta de Ahorros', 'Cuenta Corriente'],
+                                            labels: ['Sueldo', 'Ventas', 'Otros'],
                                             datasets: [
                                                 {
-                                                    data: [1000000, 5000000, 10000000],
-                                                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-                                                    hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                                                    data: [10000, 50000, 100000],
+                                                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#A8B3C5', '#FAA586'],
+                                                    hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#A8B3C5', '#FAA586'],
                                                 },
                                             ],
                                         }}

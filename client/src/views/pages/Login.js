@@ -1,5 +1,5 @@
 // client/src/views/pages/Login.js
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Asegúrate de importar Link desde react-router-dom
 import { login } from '../../services/authService';
 import {

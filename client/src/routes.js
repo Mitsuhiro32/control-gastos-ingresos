@@ -1,8 +1,10 @@
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
-const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
-const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
+const Gastos = React.lazy(() => import('./views/gastos/Gastos'))
+const RegistrarGastos = React.lazy(() => import('./views/gastos/RegistrarGastos'))
+const Ingresos = React.lazy(() => import('./views/ingresos/Ingresos'))
+const RegistrarIngresos = React.lazy(() => import('./views/ingresos/RegistrarIngresos'))
 
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
@@ -52,11 +54,12 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/theme', name: 'Theme', element: Colors, exact: true },
-  { path: '/theme/colors', name: 'Colors', element: Colors },
-  { path: '/theme/typography', name: 'Typography', element: Typography },
+  { path: '/', exact: true, name: 'Home'},
+  { path: '/dashboard', name: 'Home', element: Dashboard },
+  { path: '/gastos/inicio', name: 'Gastos', element: Gastos },
+  { path: '/gastos/registrar', name: 'Registrar Gastos', element: RegistrarGastos },
+  { path: '/ingresos/inicio', name: 'Ingresos', element: Ingresos },
+  { path: '/ingresos/registrar', name: 'Registrar Ingresos', element: RegistrarIngresos},
   { path: '/base', name: 'Base', element: Cards, exact: true },
   { path: '/base/accordion', name: 'Accordion', element: Accordion },
   { path: '/base/breadcrumbs', name: 'Breadcrumbs', element: Breadcrumbs },
