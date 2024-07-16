@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
-const {Categoria} = require('../models/gasto.model');
+const { Categoria } = require('../models/gasto.model');
 require("dotenv").config();
+
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/gastos_db";
 
 mongoose.connect(MONGODB_URI)

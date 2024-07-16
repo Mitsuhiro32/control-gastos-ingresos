@@ -10,14 +10,24 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
 
 // Pages
 const Login = React.lazy(() => import('./views/pages/Login'));
-const Register = React.lazy(() => import('./views/pages/register/Register'));
+const Register = React.lazy(() => import('./views/pages/Register'));
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'));
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
+
+const PrivateRoute = ({ element }) => {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('token'));
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+  return user ? element : null;
+};
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
   const storedTheme = useSelector((state) => state.theme);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.href.split('?')[1]);
@@ -32,11 +42,6 @@ const App = () => {
 
     setColorMode(storedTheme);
   }, [isColorModeSet, setColorMode, storedTheme]);
-
-  const PrivateRoute = ({ element, ...rest }) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    return user ? element : navigate('/login');
-  };
 
   return (
     <>

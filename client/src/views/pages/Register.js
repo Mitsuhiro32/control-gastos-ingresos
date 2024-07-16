@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+// client/src/views/pages/Register.js
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     CButton,
     CCard,
@@ -12,33 +13,33 @@ import {
     CInputGroup,
     CInputGroupText,
     CRow,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
-import axios from 'axios'
+} from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilLockLocked, cilUser } from '@coreui/icons';
+import axios from 'axios';
 
 const Register = () => {
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const navigate = useNavigate()
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleRegister = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         if (password !== confirmPassword) {
-            alert('Las contraseñas no coinciden')
-            return
+            alert('Las contraseñas no coinciden');
+            return;
         }
         axios.post('http://localhost:8000/api/register', { username, email, password })
             .then(response => {
-                console.log('Usuario registrado', response.data)
-                navigate('/login')
+                console.log('Usuario registrado', response.data);
+                navigate('/login');
             })
             .catch(error => {
-                console.error('Hubo un error al registrar', error)
-            })
-    }
+                console.error('Hubo un error al registrar', error);
+            });
+    };
 
     return (
         <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
@@ -122,7 +123,7 @@ const Register = () => {
                 </CRow>
             </CContainer>
         </div>
-    )
-}
+    );
+};
 
-export default Register
+export default Register;

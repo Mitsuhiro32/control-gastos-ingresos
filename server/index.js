@@ -3,16 +3,20 @@ const express = require("express");
 const cors = require("cors");
 const RutasGastos = require("./routes/gasto.routes");
 const authRoutes = require('./routes/auth.routes');
+const connectDB = require('./config/mongoose.config');
+
 const PORT = process.env.PORT || "8000";
 
 const app = express();
 
-require("./config/mongoose.config");
+// Conectar a la base de datos
+connectDB();
 
-app.use(express.json(), express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-RutasGastos(app);
+app.use('/api', authRoutes); // Rutas de autenticación
+RutasGastos(app); // Rutas de gastos
 
-app.listen(8000, () => console.log(`El servidor está encendido en el puerto ${PORT}`));
-
+app.listen(PORT, () => console.log(`El servidor está encendido en el puerto ${PORT}`));

@@ -1,7 +1,7 @@
 // client/src/views/pages/Login.js
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Asegúrate de importar Link desde react-router-dom
-import { login } from '../../services/authService';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   CButton,
   CCard,
@@ -26,7 +26,8 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      const response = await axios.post('http://localhost:8000/api/login', { email, password });
+      localStorage.setItem('token', response.data.token);
       navigate('/profile');
     } catch (error) {
       console.error('Error logging in', error);
