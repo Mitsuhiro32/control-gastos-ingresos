@@ -2,10 +2,10 @@ import { legacy_createStore as createStore } from 'redux'
 /* import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './reducers'; */
 
-const initialState = {
-  sidebarShow: true,
-  theme: 'light',
-}
+const store = configureStore({
+  reducer: rootReducer,
+});
+
 
 const changeState = (state = initialState, { type, ...rest }) => {
   switch (type) {
