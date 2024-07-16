@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const categoriaSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
@@ -36,6 +37,15 @@ const usuarioSchema = new mongoose.Schema({
     ingresos: { type: [ingresoSchema]},
     gastos: { type: [gastoSchema]},
     alarmas: { type: [alarmaSchema]}
+});
+
+usuarioSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        return next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
 });
 
 const Usuario = mongoose.model('Usuario', usuarioSchema);

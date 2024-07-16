@@ -3,6 +3,7 @@ import React, { Suspense, useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { CSpinner, useColorModes } from '@coreui/react';
+import PropTypes from 'prop-types';
 import './scss/style.scss';
 
 // Containers
@@ -16,13 +17,17 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
 
 const PrivateRoute = ({ element }) => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('token'));
+  const token = localStorage.getItem('token');
   useEffect(() => {
-    if (!user) {
+    if (!token) {
       navigate('/login');
     }
-  }, [user, navigate]);
-  return user ? element : null;
+  }, [token, navigate]);
+  return token ? element : null;
+};
+
+PrivateRoute.propTypes = {
+  element: PropTypes.element.isRequired,
 };
 
 const App = () => {
@@ -58,7 +63,7 @@ const App = () => {
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
           <Route path="/profile" element={<PrivateRoute element={<DefaultLayout />} />} />
-          <Route path="*" name="Home" element={<DefaultLayout />} />
+          <Route path="*" name="inicio" element={<PrivateRoute element={<DefaultLayout />} />} />
         </Routes>
       </Suspense>
     </>

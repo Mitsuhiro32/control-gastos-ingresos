@@ -50,14 +50,14 @@ const Register = () => {
                             <CCard className="p-4">
                                 <CCardBody>
                                     <CForm onSubmit={handleRegister}>
-                                        <h1>Register</h1>
-                                        <p className="text-body-secondary">Create your account</p>
+                                        <h1>Registrarse</h1>
+                                        <p className="text-body-secondary">Crea una cuenta</p>
                                         <CInputGroup className="mb-3">
                                             <CInputGroupText>
                                                 <CIcon icon={cilUser} />
                                             </CInputGroupText>
                                             <CFormInput
-                                                placeholder="Username"
+                                                placeholder="Nombre de usuario"
                                                 autoComplete="username"
                                                 value={username}
                                                 onChange={(e) => setUsername(e.target.value)}
@@ -66,19 +66,19 @@ const Register = () => {
                                         <CInputGroup className="mb-3">
                                             <CInputGroupText>@</CInputGroupText>
                                             <CFormInput
-                                                placeholder="Email"
+                                                placeholder="Correo electrónico"
                                                 autoComplete="email"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
                                             />
                                         </CInputGroup>
-                                        <CInputGroup className="mb-4">
+                                        <CInputGroup className="mb-3">
                                             <CInputGroupText>
                                                 <CIcon icon={cilLockLocked} />
                                             </CInputGroupText>
                                             <CFormInput
                                                 type="password"
-                                                placeholder="Password"
+                                                placeholder="Contraseña"
                                                 autoComplete="new-password"
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
@@ -90,14 +90,14 @@ const Register = () => {
                                             </CInputGroupText>
                                             <CFormInput
                                                 type="password"
-                                                placeholder="Confirm Password"
+                                                placeholder="Confirmar contraseña"
                                                 autoComplete="new-password"
                                                 value={confirmPassword}
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                             />
                                         </CInputGroup>
                                         <CButton type="submit" color="primary" className="px-4">
-                                            Register
+                                            Registrarse
                                         </CButton>
                                     </CForm>
                                 </CCardBody>
@@ -105,14 +105,13 @@ const Register = () => {
                             <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                                 <CCardBody className="text-center">
                                     <div>
-                                        <h2>Sign in</h2>
+                                        <h2>Iniciar Sesión</h2>
                                         <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua.
+                                            ¿Ya tienes una cuenta? Inicia sesión ahora y comienza a administrar tus finanzas.
                                         </p>
                                         <Link to="/login">
                                             <CButton color="primary" className="mt-3" active tabIndex={-1}>
-                                                Login Now!
+                                                Iniciar Sesión Ahora!
                                             </CButton>
                                         </Link>
                                     </div>

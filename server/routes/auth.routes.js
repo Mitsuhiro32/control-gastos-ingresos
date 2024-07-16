@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const { Usuario } = require('../models/gasto.model');
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
@@ -11,9 +11,9 @@ router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
 
     try {
-        const user = new User({ username, email, password });
+        const user = new Usuario({ username, email, password });
         await user.save();
-        res.status(201).json({ message: 'User created successfully' });
+        res.status(201).json({ message: 'Usuario registrado correctamente' });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -24,17 +24,17 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await User.findOne({ email });
+        const user = await Usuario.findOne({ email });
         if (!user) {
-            return res.status(400).json({ error: 'Invalid credentials' });
+            return res.status(400).json({ error: 'Usuario no encontrado' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ error: 'Invalid credentials' });
+            return res.status(400).json({ error: 'Contraseña incorrecta' });
         }
 
-        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id , username: user.username}, JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ token });
     } catch (error) {

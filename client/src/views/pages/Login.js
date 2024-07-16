@@ -28,7 +28,10 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:8000/api/login', { email, password });
       localStorage.setItem('token', response.data.token);
-      navigate('/profile');
+      const decoded = JSON.parse(atob(response.data.token.split('.')[1]));
+      localStorage.setItem('id', decoded.id);
+      localStorage.setItem('username', decoded.username);
+      navigate('/dashboard');
     } catch (error) {
       console.error('Error logging in', error);
     }
@@ -43,14 +46,14 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm onSubmit={handleLogin}>
-                    <h1>Login</h1>
-                    <p className="text-body-secondary">Sign In to your account</p>
+                    <h1>Iniciar Sesión</h1>
+                    <p className="text-body-secondary">Inicia sesión en tu cuenta</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Email"
+                        placeholder="Correo electrónico"
                         autoComplete="username"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -62,7 +65,7 @@ const Login = () => {
                       </CInputGroupText>
                       <CFormInput
                         type="password"
-                        placeholder="Password"
+                        placeholder="Contraseña"
                         autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -71,14 +74,14 @@ const Login = () => {
                     <CRow>
                       <CCol xs={6}>
                         <CButton type="submit" color="primary" className="px-4">
-                          Login
+                          Iniciar Sesión
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
+                      {/* <CCol xs={6} className="text-right">
                         <Link to="/forgot-password" className="text-decoration-none">
                           Forgot password?
                         </Link>
-                      </CCol>
+                      </CCol> */}
                     </CRow>
                   </CForm>
                 </CCardBody>
@@ -86,14 +89,13 @@ const Login = () => {
               <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
                   <div>
-                    <h2>Sign up</h2>
+                    <h2>Registrarse</h2>
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua.
+                      ¿No tienes una cuenta? Regístrate ahora y comienza a administrar tus finanzas.
                     </p>
                     <Link to="/register" className="text-decoration-none">
                       <CButton color="primary" className="mt-3" active tabIndex={-1}>
-                        Register Now!
+                        Registrarse Ahora!
                       </CButton>
                     </Link>
                   </div>
