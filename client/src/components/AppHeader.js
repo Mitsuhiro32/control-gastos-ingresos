@@ -22,6 +22,7 @@ import {
   cilSun,
 } from '@coreui/icons'
 
+import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
 
 const AppHeader = () => {
@@ -103,6 +104,9 @@ const AppHeader = () => {
           </li>
           <AppHeaderDropdown />
         </CHeaderNav>
+      </CContainer>
+      <CContainer className="px-4" fluid>
+        <AppBreadcrumb />
       </CContainer>
     </CHeader>
   )
