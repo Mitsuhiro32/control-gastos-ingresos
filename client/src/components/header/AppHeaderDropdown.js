@@ -1,5 +1,4 @@
 import {
-  CAvatar,
   CBadge,
   CDropdown,
   CDropdownDivider,
@@ -21,13 +20,12 @@ import {
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
-import avatar8 from './../../assets/images/avatars/2.jpg'
-
 const AppHeaderDropdown = () => {
+  const username = localStorage.getItem('username') || 'Usuario'
   return (
-    <CDropdown variant="nav-item">
+    <CDropdown variant="nav-item" style={{ display: 'flex', alignItems: 'center' }}>
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
-        <CAvatar src={avatar8} size="md" />
+        <span>{username}</span>
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>
