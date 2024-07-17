@@ -7,24 +7,22 @@ const categoriaSchema = new mongoose.Schema({
 });
 
 const ingresoSchema = new mongoose.Schema({
-    categoria: { type: [categoriaSchema], required: true },
+    categoria: { type: String, required: true },
+    descripcion: { type: String, required: true },
     cantidad: { type: Number, required: true },
-    fecha: { type: Date, required: true },
-    descripcion: { type: String, required: true }
-
+    fecha: { type: Date, required: true }
 });
 
 const gastoSchema = new mongoose.Schema({
-    categoria: { type: [categoriaSchema], required: true },
+    categoria: { type: String, required: true },
+    descripcion: { type: String, required: true },
     cantidad: { type: Number, required: true },
-    fecha: { type: Date, required: true },
-    descripcion: { type: String, required: true }
-
+    fecha: { type: Date, required: true }
 });
 
 const alarmaSchema = new mongoose.Schema({
     tipo: { type: String, required: true },  // puede ser gasto o ingreso
-    categoria: { type: [categoriaSchema], required: true },
+    categoria: { type: String, required: true },
     cantidad: { type: Number, required: true },
     mensaje: { type: String, required: true }
 });
@@ -34,8 +32,8 @@ const usuarioSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     categoriasPersonalizadas: { type: [categoriaSchema] },
-    ingresos: { type: [ingresoSchema]},
-    gastos: { type: [gastoSchema]},
+    ingresosPersonales: { type: [ingresoSchema]},
+    gastosPersonales: { type: [gastoSchema]},
     alarmas: { type: [alarmaSchema]}
 });
 

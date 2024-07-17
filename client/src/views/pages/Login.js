@@ -16,25 +16,46 @@ import {
   CRow,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilLockLocked, cilUser } from '@coreui/icons';
+import { cilEnvelopeClosed, cilLockLocked } from '@coreui/icons';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState({
+    email: '',
+    password: '',
+    error: '',
+  });
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8000/api/login', { email, password });
-      localStorage.setItem('token', response.data.token);
-      const decoded = JSON.parse(atob(response.data.token.split('.')[1]));
-      localStorage.setItem('id', decoded.id);
-      localStorage.setItem('username', decoded.username);
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Error logging in', error);
+    
+    if (!email || !password) {
+      setError({
+        email: email ? '' : 'El correo electrónico es requerido',
+        password: password ? '' : 'La contraseña es requerida',
+        error: '',
+      });
+      return;
+    } else {
+      setError({ email: '', password: '', error: '' });
     }
+
+    axios.post('http://localhost:8000/login', { email, password })
+      .then(response => {
+        console.log('Usuario logueado', response.data);
+        localStorage.setItem('token', response.data.token);
+        const decoded = JSON.parse(atob(response.data.token.split('.')[1]));
+        localStorage.setItem('username', decoded.username);
+        navigate('/dashboard');
+      })
+      .catch(error => {
+        setError({ error: error.response.data.message });
+        console.error('Hubo un error al loguear', error);
+        setEmail('');
+        setPassword('');
+      });
   };
 
   return (
@@ -48,15 +69,20 @@ const Login = () => {
                   <CForm onSubmit={handleLogin}>
                     <h1>Iniciar Sesión</h1>
                     <p className="text-body-secondary">Inicia sesión en tu cuenta</p>
+                    {error.error && <p className="text-danger">{error.error}</p>}
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
-                        <CIcon icon={cilUser} />
+                        <CIcon icon={cilEnvelopeClosed} />
                       </CInputGroupText>
                       <CFormInput
                         placeholder="Correo electrónico"
                         autoComplete="username"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value)
+                          setError({ ...error, email: '' })
+                        }}
+                        {...(error.email && { invalid: true, feedbackInvalid: error.email })}
                       />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
@@ -68,7 +94,11 @@ const Login = () => {
                         placeholder="Contraseña"
                         autoComplete="current-password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => {
+                          setPassword(e.target.value)
+                          setError({ ...error, password: '' })
+                        }}
+                        {...(error.password && { invalid: true, feedbackInvalid: error.password })}
                       />
                     </CInputGroup>
                     <CRow>

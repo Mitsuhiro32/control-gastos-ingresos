@@ -1,26 +1,21 @@
 const UsuarioController = require('../controller/gasto.controller');
+const validarToken = require('../middleware/verificarToken');
 
 module.exports = function (app) {
-    // Rutas para usuarios
-    app.get('/usuarios', UsuarioController.findAllUsuarios);
-    app.get('/usuarios/:id', UsuarioController.findOneUsuario);
-    app.post('/usuarios', UsuarioController.createUsuario);
-    app.delete('/usuarios/:id', UsuarioController.deleteUsuario);
-
     // Rutas para ingresos
-    app.post('/usuarios/:id/ingresos', UsuarioController.addIngresoToUsuario);
-    app.get('/usuarios/:id/ingresos', UsuarioController.findAllIngresos);
+    app.post('/usuarios/ingresos', validarToken, UsuarioController.addIngresoToUsuario);
+    app.get('/usuarios/ingresos', validarToken,  UsuarioController.findAllIngresos);
 
     // Rutas para gastos
-    app.post('/usuarios/:id/gastos', UsuarioController.addGastoToUsuario);
-    app.get('/usuarios/:id/gastos', UsuarioController.findAllGastos);
+    app.post('/usuarios/gastos', validarToken, UsuarioController.addGastoToUsuario);
+    app.get('/usuarios/gastos', validarToken, UsuarioController.findAllGastos);
 
     // Rutas para categorías
-    app.post('/usuarios/:id/categorias', UsuarioController.addCategoriaToUsuario);
-    app.get('/usuarios/:id/categorias', UsuarioController.findCategoriasByUsuarioIncludingPredefinidas);
-    app.get('/categorias', UsuarioController.findAllCategorias);
+    app.post('/usuarios/categorias', validarToken, UsuarioController.addCategoriaToUsuario);
+    app.get('/usuarios/categorias', validarToken, UsuarioController.findCategoriasByUsuarioIncludingPredefinidas);
 
     // Rutas para alarmas
-    app.post('/usuarios/:id/alarmas', UsuarioController.addAlarmaToUsuario);
+    app.post('/usuarios/alarmas', validarToken, UsuarioController.addAlarmaToUsuario);
+    app.get('/usuarios/alarmas', validarToken, UsuarioController.findAllAlarmas);
 }
 
