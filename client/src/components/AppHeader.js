@@ -9,13 +9,10 @@ import {
   CHeader,
   CHeaderNav,
   CHeaderToggler,
-  CNavLink,
-  CNavItem,
   useColorModes,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {
-  cilBell,
   cilContrast,
   cilMenu,
   cilMoon,
@@ -47,17 +44,17 @@ const AppHeader = () => {
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
-        <CHeaderNav className="ms-auto">
+        {/* <CHeaderNav className="ms-auto">
           <CNavItem>
             <CNavLink href="#">
               <CIcon icon={cilBell} size="lg" />
             </CNavLink>
           </CNavItem>
-        </CHeaderNav>
+        </CHeaderNav> */}
         <CHeaderNav>
-          <li className="nav-item py-1">
+          {/* <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-          </li>
+          </li> */}
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false}>
               {colorMode === 'dark' ? (
@@ -76,7 +73,7 @@ const AppHeader = () => {
                 type="button"
                 onClick={() => setColorMode('light')}
               >
-                <CIcon className="me-2" icon={cilSun} size="lg" /> Light
+                <CIcon className="me-2" icon={cilSun} size="lg" /> Claro
               </CDropdownItem>
               <CDropdownItem
                 active={colorMode === 'dark'}
@@ -85,7 +82,7 @@ const AppHeader = () => {
                 type="button"
                 onClick={() => setColorMode('dark')}
               >
-                <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
+                <CIcon className="me-2" icon={cilMoon} size="lg" /> Oscuro
               </CDropdownItem>
               <CDropdownItem
                 active={colorMode === 'auto'}
@@ -94,7 +91,7 @@ const AppHeader = () => {
                 type="button"
                 onClick={() => setColorMode('auto')}
               >
-                <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
+                <CIcon className="me-2" icon={cilContrast} size="lg" /> Automático
               </CDropdownItem>
             </CDropdownMenu>
           </CDropdown>

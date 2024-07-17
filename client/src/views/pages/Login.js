@@ -16,22 +16,46 @@ import {
   CRow,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilLockLocked, cilUser } from '@coreui/icons';
+import { cilEnvelopeClosed, cilLockLocked } from '@coreui/icons';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState({
+    email: '',
+    password: '',
+    error: '',
+  });
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8000/api/login', { email, password });
-      localStorage.setItem('token', response.data.token);
-      navigate('/profile');
-    } catch (error) {
-      console.error('Error logging in', error);
+    
+    if (!email || !password) {
+      setError({
+        email: email ? '' : 'El correo electrónico es requerido',
+        password: password ? '' : 'La contraseña es requerida',
+        error: '',
+      });
+      return;
+    } else {
+      setError({ email: '', password: '', error: '' });
     }
+
+    axios.post('http://localhost:8000/login', { email, password })
+      .then(response => {
+        console.log('Usuario logueado', response.data);
+        localStorage.setItem('token', response.data.token);
+        const decoded = JSON.parse(atob(response.data.token.split('.')[1]));
+        localStorage.setItem('username', decoded.username);
+        navigate('/dashboard');
+      })
+      .catch(error => {
+        setError({ error: error.response.data.message });
+        console.error('Hubo un error al loguear', error);
+        setEmail('');
+        setPassword('');
+      });
   };
 
   return (
@@ -43,17 +67,22 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm onSubmit={handleLogin}>
-                    <h1>Login</h1>
-                    <p className="text-body-secondary">Sign In to your account</p>
+                    <h1>Iniciar Sesión</h1>
+                    <p className="text-body-secondary">Inicia sesión en tu cuenta</p>
+                    {error.error && <p className="text-danger">{error.error}</p>}
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
-                        <CIcon icon={cilUser} />
+                        <CIcon icon={cilEnvelopeClosed} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Email"
+                        placeholder="Correo electrónico"
                         autoComplete="username"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value)
+                          setError({ ...error, email: '' })
+                        }}
+                        {...(error.email && { invalid: true, feedbackInvalid: error.email })}
                       />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
@@ -62,23 +91,27 @@ const Login = () => {
                       </CInputGroupText>
                       <CFormInput
                         type="password"
-                        placeholder="Password"
+                        placeholder="Contraseña"
                         autoComplete="current-password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => {
+                          setPassword(e.target.value)
+                          setError({ ...error, password: '' })
+                        }}
+                        {...(error.password && { invalid: true, feedbackInvalid: error.password })}
                       />
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
                         <CButton type="submit" color="primary" className="px-4">
-                          Login
+                          Iniciar Sesión
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
+                      {/* <CCol xs={6} className="text-right">
                         <Link to="/forgot-password" className="text-decoration-none">
                           Forgot password?
                         </Link>
-                      </CCol>
+                      </CCol> */}
                     </CRow>
                   </CForm>
                 </CCardBody>
@@ -86,14 +119,13 @@ const Login = () => {
               <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
                   <div>
-                    <h2>Sign up</h2>
+                    <h2>Registrarse</h2>
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua.
+                      ¿No tienes una cuenta? Regístrate ahora y comienza a administrar tus finanzas.
                     </p>
                     <Link to="/register" className="text-decoration-none">
                       <CButton color="primary" className="mt-3" active tabIndex={-1}>
-                        Register Now!
+                        Registrarse Ahora!
                       </CButton>
                     </Link>
                   </div>
