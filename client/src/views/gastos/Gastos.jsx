@@ -1,5 +1,5 @@
-// import { cilBell } from "@coreui/icons"
-// import CIcon from "@coreui/icons-react"
+import { cilFilterX } from "@coreui/icons"
+import CIcon from "@coreui/icons-react"
 import { CButton, CCard, CCardBody, CCol, CFormInput, CFormLabel, CFormSelect, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow } from "@coreui/react"
 import { CChartLine, CChartPie } from "@coreui/react-chartjs"
 import { useEffect, useState } from "react"
@@ -31,48 +31,64 @@ const Gastos = () => {
                 }
             })
                 .then((res) => {
-                    console.log(res.data.gastos)
-                    const agrupadoPorCategoria = res.data.gastos.reduce((acc, gasto) => {
-                        if (!acc[gasto.categoria]) {
-                            acc[gasto.categoria] = 0
-                        }
-                        acc[gasto.categoria] += gasto.cantidad
-                        return acc
-                    }, {})
+                    const inicio = new Date(selectedStartDate);
+                    const fin = new Date(selectedEndDate);
+                    let filtradoPorFecha = res.data.gastos;
 
-                    const agrupadoPorMes = res.data.gastos.reduce((acc, gasto) => {
-                        const fecha = new Date(gasto.fecha)
-                        const mes = fecha.toLocaleString('default', { month: 'long' }).charAt(0).toUpperCase() + fecha.toLocaleString('default', { month: 'long' }).slice(1)
-                        if (!acc[mes]) {
-                            acc[mes] = 0
+                    if (selectedStartDate !== '' && selectedEndDate !== '') {
+                        // Filtrar gastos basados en las fechas seleccionadas
+                        filtradoPorFecha = res.data.gastos.filter((gasto) => {
+                            const fechaGasto = new Date(gasto.fecha);
+                            return fechaGasto >= inicio && fechaGasto <= fin;
+                        });
+                    }
+
+                    if (selectedCategory !== '') {
+                        filtradoPorFecha = filtradoPorFecha.filter(gasto => gasto.categoria === selectedCategory);
+                    }
+
+                    const agrupadoPorCategoria = filtradoPorFecha.reduce((acc, gasto) => {
+                        if (!acc[gasto.categoria]) {
+                            acc[gasto.categoria] = 0;
                         }
-                        acc[mes] += gasto.cantidad
-                        return acc
-                    }, {})
+                        acc[gasto.categoria] += gasto.cantidad;
+                        return acc;
+                    }, {});
+
+                    const agrupadoPorMes = filtradoPorFecha.reduce((acc, gasto) => {
+                        const fecha = new Date(gasto.fecha);
+                        const mes = fecha.toLocaleString('default', { month: 'long' }).charAt(0).toUpperCase() + fecha.toLocaleString('default', { month: 'long' }).slice(1);
+                        if (!acc[mes]) {
+                            acc[mes] = 0;
+                        }
+                        acc[mes] += gasto.cantidad;
+                        return acc;
+                    }, {});
 
                     const gastos = Object.keys(agrupadoPorCategoria).map((categoria) => {
                         return {
                             categoria,
                             cantidad: agrupadoPorCategoria[categoria]
-                        }
-                    })
+                        };
+                    });
 
                     const gastosPorMes = Object.keys(agrupadoPorMes)
                         .map((mes) => {
                             return {
                                 mes,
                                 cantidad: agrupadoPorMes[mes]
-                            }
+                            };
                         })
                         .sort((a, b) => {
-                            const monthA = new Date(a.mes + ' 1, 2000');
-                            const monthB = new Date(b.mes + ' 1, 2000');
-                            return monthA - monthB;
+                            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                            const monthAIndex = months.indexOf(a.mes);
+                            const monthBIndex = months.indexOf(b.mes);
+                            return monthAIndex - monthBIndex;
                         });
 
-                    setData(gastos)
-                    setGastosPorMes(gastosPorMes)
-                    console.log(gastosPorMes)
+                    setData(gastos);
+                    setGastosPorMes(gastosPorMes);
+                    console.log(gastosPorMes);
                 })
                 .catch((err) => {
                     console.log(err.response.data)
@@ -115,16 +131,9 @@ const Gastos = () => {
                 })
         }
 
-        if (selectedStartDate && selectedEndDate) {
-            const filterData = axiosData().filter((data) => {
-                return data.fecha >= selectedStartDate && data.fecha <= selectedEndDate
-            })
-            setData(filterData)
-        }
-
         axiosData()
         axiosCategories()
-    }, [selectedStartDate, selectedEndDate, contadorCategory, navigate])
+    }, [selectedStartDate, selectedEndDate, contadorCategory, navigate, selectedCategory])
 
     const agregarCategoria = (e) => {
         e.preventDefault()
@@ -241,6 +250,7 @@ const Gastos = () => {
                                 className="form-control"
                                 style={{ display: 'inline-block', width: 'auto', margin: '10px' }}
                                 onChange={(e) => setSelectedStartDate(e.target.value)}
+                                value={selectedStartDate}
                             />
                             <CFormLabel htmlFor="hasta">hasta: </CFormLabel>
                             <CFormInput
@@ -250,7 +260,18 @@ const Gastos = () => {
                                 className="form-control"
                                 style={{ display: 'inline-block', width: 'auto', margin: '10px' }}
                                 onChange={(e) => setSelectedEndDate(e.target.value)}
+                                value={selectedEndDate}
                             />
+                            {selectedCategory !== '' || selectedStartDate !== '' || selectedEndDate !== '' ? (
+                                <CButton color="primary" style={{ marginBottom: '5px' }} onClick={() => {
+                                    setSelectedCategory('')
+                                    setSelectedStartDate('')
+                                    setSelectedEndDate('')
+                                }}>
+                                    <CIcon icon={cilFilterX} className="me-2" />
+                                    Cancelar filtro
+                                </CButton>) : ''
+                            }
                             <br />
                             {data.length > 0 ? (
                                 <>

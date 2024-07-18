@@ -1,23 +1,25 @@
-import { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 
 import {
   CRow,
   CCol,
-  CDropdown,
-  CDropdownMenu,
-  CDropdownItem,
-  CDropdownToggle,
   CWidgetStatsA,
 } from '@coreui/react'
 import { getStyle } from '@coreui/utils'
-import { CChartBar, CChartLine } from '@coreui/react-chartjs'
+import { CChartLine } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
-import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
+import { cilArrowBottom, cilArrowTop } from '@coreui/icons'
+import { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
+import Toastify from 'toastify-js';
 
 const WidgetsDropdown = (props) => {
   const widgetChartRef1 = useRef(null)
   const widgetChartRef2 = useRef(null)
+  const [ingresosData, setingresosData] = useState([]);
+  const [gastosData, setgastosData] = useState([]);
+  const [ingresosPorMes, setIngresosPorMes] = useState([]);
+  const [gastosPorMes, setGastosPorMes] = useState([]);
 
   useEffect(() => {
     document.documentElement.addEventListener('ColorSchemeChange', () => {
@@ -35,348 +37,250 @@ const WidgetsDropdown = (props) => {
         })
       }
     })
-  }, [widgetChartRef1, widgetChartRef2])
+
+    // Obtener los datos de los ingresos
+    axios.get('http://localhost:8000/usuarios/ingresos', {
+      headers: {
+        token_user: localStorage.getItem('token')
+      }
+    })
+      .then(response => {
+        console.log('Ingresos', response.data.ingresos);
+        setingresosData(response.data.ingresos);
+        const agrupadoPorMes = response.data.ingresos.reduce((acc, ingreso) => {
+          const fecha = new Date(ingreso.fecha)
+          const mes = fecha.toLocaleString('default', { month: 'long' }).charAt(0).toUpperCase() + fecha.toLocaleString('default', { month: 'long' }).slice(1)
+          if (!acc[mes]) {
+            acc[mes] = 0
+          }
+          acc[mes] += ingreso.cantidad
+          return acc
+        }, {})
+
+        const ingresosPorMes = Object.keys(agrupadoPorMes)
+          .map((mes) => {
+            return {
+              mes,
+              cantidad: agrupadoPorMes[mes]
+            }
+          })
+          .sort((a, b) => {
+            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            const monthAIndex = months.indexOf(a.mes);
+            const monthBIndex = months.indexOf(b.mes);
+            return monthAIndex - monthBIndex;
+          });
+
+        setIngresosPorMes(ingresosPorMes)
+        console.log('Ingresos por mes', ingresosPorMes);
+      })
+      .catch(error => {
+        console.error(error);
+        Toastify({
+          text: "Error al cargar los datos de ingresos",
+          style: {
+            background: 'linear-gradient(to right, #ff416c, #ff4b2b)',
+          },
+          duration: 5000
+        }).showToast()
+      });
+
+    // Obtener los datos de los gastos
+    axios.get('http://localhost:8000/usuarios/gastos', {
+      headers: {
+        token_user: localStorage.getItem('token')
+      }
+    })
+      .then(response => {
+        setgastosData(response.data.gastos);
+        const agrupadoPorMes = response.data.gastos.reduce((acc, gasto) => {
+          const fecha = new Date(gasto.fecha)
+          const mes = fecha.toLocaleString('default', { month: 'long' }).charAt(0).toUpperCase() + fecha.toLocaleString('default', { month: 'long' }).slice(1)
+          if (!acc[mes]) {
+            acc[mes] = 0
+          }
+          acc[mes] += gasto.cantidad
+          return acc
+        }, {})
+
+        const gastosPorMes = Object.keys(agrupadoPorMes)
+          .map((mes) => {
+            return {
+              mes,
+              cantidad: agrupadoPorMes[mes]
+            }
+          })
+          .sort((a, b) => {
+            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            const monthAIndex = months.indexOf(a.mes);
+            const monthBIndex = months.indexOf(b.mes);
+            return monthAIndex - monthBIndex;
+          });
+
+        setGastosPorMes(gastosPorMes)
+        console.log('Gastos por mes', gastosPorMes);
+      })
+      .catch(error => {
+        console.error(error);
+        Toastify({
+          text: "Error al cargar los datos de gastos",
+          style: {
+            background: 'linear-gradient(to right, #ff416c, #ff4b2b)',
+          },
+          duration: 5000
+        }).showToast()
+      });
+  }, [widgetChartRef1, widgetChartRef2]);
+
+  const formatNumber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
 
   return (
     <CRow className={props.className} xs={{ gutter: 4 }}>
-      <CCol sm={6} xl={4} xxl={3}>
-        <CWidgetStatsA
-          color="primary"
-          value={
-            <>
-              26K{' '}
-              <span className="fs-6 fw-normal">
-                (-12.4% <CIcon icon={cilArrowBottom} />)
-              </span>
-            </>
-          }
-          title="Users"
-          action={
-            <CDropdown alignment="end">
-              <CDropdownToggle color="transparent" caret={false} className="text-white p-0">
-                <CIcon icon={cilOptions} />
-              </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>Action</CDropdownItem>
-                <CDropdownItem>Another action</CDropdownItem>
-                <CDropdownItem>Something else here...</CDropdownItem>
-                <CDropdownItem disabled>Disabled action</CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
-          }
-          chart={
-            <CChartLine
-              ref={widgetChartRef1}
-              className="mt-3 mx-3"
-              style={{ height: '70px' }}
-              data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
-                  {
-                    label: 'My First dataset',
-                    backgroundColor: 'transparent',
-                    borderColor: 'rgba(255,255,255,.55)',
-                    pointBackgroundColor: getStyle('--cui-primary'),
-                    data: [65, 59, 84, 84, 51, 55, 40],
-                  },
-                ],
-              }}
-              options={{
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                maintainAspectRatio: false,
-                scales: {
-                  x: {
-                    border: {
-                      display: false,
-                    },
-                    grid: {
-                      display: false,
-                      drawBorder: false,
-                    },
-                    ticks: {
-                      display: false,
-                    },
-                  },
-                  y: {
-                    min: 30,
-                    max: 89,
-                    display: false,
-                    grid: {
-                      display: false,
-                    },
-                    ticks: {
-                      display: false,
-                    },
-                  },
-                },
-                elements: {
-                  line: {
-                    borderWidth: 1,
-                    tension: 0.4,
-                  },
-                  point: {
-                    radius: 4,
-                    hitRadius: 10,
-                    hoverRadius: 4,
-                  },
-                },
-              }}
-            />
-          }
-        />
-      </CCol>
-      <CCol sm={6} xl={4} xxl={3}>
-        <CWidgetStatsA
-          color="info"
-          value={
-            <>
-              $6.200{' '}
-              <span className="fs-6 fw-normal">
-                (40.9% <CIcon icon={cilArrowTop} />)
-              </span>
-            </>
-          }
-          title="Income"
-          action={
-            <CDropdown alignment="end">
-              <CDropdownToggle color="transparent" caret={false} className="text-white p-0">
-                <CIcon icon={cilOptions} />
-              </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>Action</CDropdownItem>
-                <CDropdownItem>Another action</CDropdownItem>
-                <CDropdownItem>Something else here...</CDropdownItem>
-                <CDropdownItem disabled>Disabled action</CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
-          }
-          chart={
-            <CChartLine
-              ref={widgetChartRef2}
-              className="mt-3 mx-3"
-              style={{ height: '70px' }}
-              data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
-                  {
-                    label: 'My First dataset',
-                    backgroundColor: 'transparent',
-                    borderColor: 'rgba(255,255,255,.55)',
-                    pointBackgroundColor: getStyle('--cui-info'),
-                    data: [1, 18, 9, 17, 34, 22, 11],
-                  },
-                ],
-              }}
-              options={{
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                maintainAspectRatio: false,
-                scales: {
-                  x: {
-                    border: {
-                      display: false,
-                    },
-                    grid: {
-                      display: false,
-                      drawBorder: false,
-                    },
-                    ticks: {
-                      display: false,
-                    },
-                  },
-                  y: {
-                    min: -9,
-                    max: 39,
-                    display: false,
-                    grid: {
-                      display: false,
-                    },
-                    ticks: {
-                      display: false,
-                    },
-                  },
-                },
-                elements: {
-                  line: {
-                    borderWidth: 1,
-                  },
-                  point: {
-                    radius: 4,
-                    hitRadius: 10,
-                    hoverRadius: 4,
-                  },
-                },
-              }}
-            />
-          }
-        />
-      </CCol>
-      <CCol sm={6} xl={4} xxl={3}>
-        <CWidgetStatsA
-          color="warning"
-          value={
-            <>
-              2.49%{' '}
-              <span className="fs-6 fw-normal">
-                (84.7% <CIcon icon={cilArrowTop} />)
-              </span>
-            </>
-          }
-          title="Conversion Rate"
-          action={
-            <CDropdown alignment="end">
-              <CDropdownToggle color="transparent" caret={false} className="text-white p-0">
-                <CIcon icon={cilOptions} />
-              </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>Action</CDropdownItem>
-                <CDropdownItem>Another action</CDropdownItem>
-                <CDropdownItem>Something else here...</CDropdownItem>
-                <CDropdownItem disabled>Disabled action</CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
-          }
-          chart={
-            <CChartLine
-              className="mt-3"
-              style={{ height: '70px' }}
-              data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
-                  {
-                    label: 'My First dataset',
-                    backgroundColor: 'rgba(255,255,255,.2)',
-                    borderColor: 'rgba(255,255,255,.55)',
-                    data: [78, 81, 80, 45, 34, 12, 40],
-                    fill: true,
-                  },
-                ],
-              }}
-              options={{
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                maintainAspectRatio: false,
-                scales: {
-                  x: {
-                    display: false,
-                  },
-                  y: {
-                    display: false,
-                  },
-                },
-                elements: {
-                  line: {
-                    borderWidth: 2,
-                    tension: 0.4,
-                  },
-                  point: {
-                    radius: 0,
-                    hitRadius: 10,
-                    hoverRadius: 4,
-                  },
-                },
-              }}
-            />
-          }
-        />
-      </CCol>
-      <CCol sm={6} xl={4} xxl={3}>
+      <CCol sm={12} xl={4} xxl={6}>
         <CWidgetStatsA
           color="danger"
           value={
             <>
-              44K{' '}
+              {'-'}{formatNumber(gastosData.reduce((acc, item) => acc + item.cantidad, 0))}{' Gs '}
               <span className="fs-6 fw-normal">
-                (-23.6% <CIcon icon={cilArrowBottom} />)
+                <CIcon icon={cilArrowBottom} />
               </span>
             </>
           }
-          title="Sessions"
-          action={
-            <CDropdown alignment="end">
-              <CDropdownToggle color="transparent" caret={false} className="text-white p-0">
-                <CIcon icon={cilOptions} />
-              </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>Action</CDropdownItem>
-                <CDropdownItem>Another action</CDropdownItem>
-                <CDropdownItem>Something else here...</CDropdownItem>
-                <CDropdownItem disabled>Disabled action</CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
-          }
+          title="Gastos"
           chart={
-            <CChartBar
+            <CChartLine
+              ref={widgetChartRef2}
               className="mt-3 mx-3"
-              style={{ height: '70px' }}
+              style={{ height: '65px' }}
               data={{
-                labels: [
-                  'January',
-                  'February',
-                  'March',
-                  'April',
-                  'May',
-                  'June',
-                  'July',
-                  'August',
-                  'September',
-                  'October',
-                  'November',
-                  'December',
-                  'January',
-                  'February',
-                  'March',
-                  'April',
-                ],
+                labels: gastosPorMes.map(item => item.mes),
                 datasets: [
                   {
-                    label: 'My First dataset',
-                    backgroundColor: 'rgba(255,255,255,.2)',
+                    label: 'Gasto',
+                    backgroundColor: 'transparent',
                     borderColor: 'rgba(255,255,255,.55)',
-                    data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
-                    barPercentage: 0.6,
+                    pointBackgroundColor: getStyle('--cui-danger'),
+                    data: gastosPorMes.map(item => item.cantidad),
                   },
                 ],
               }}
               options={{
-                maintainAspectRatio: false,
                 plugins: {
                   legend: {
                     display: false,
                   },
                 },
+                maintainAspectRatio: false,
                 scales: {
                   x: {
-                    grid: {
-                      display: false,
-                      drawTicks: false,
-                    },
-                    ticks: {
-                      display: false,
-                    },
-                  },
-                  y: {
                     border: {
                       display: false,
                     },
                     grid: {
                       display: false,
                       drawBorder: false,
-                      drawTicks: false,
                     },
                     ticks: {
                       display: false,
                     },
+                  },
+                  y: {
+                    display: false,
+                    grid: {
+                      display: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                },
+                elements: {
+                  line: {
+                    borderWidth: 1,
+                    tension: 0.4,
+                  },
+                  point: {
+                    radius: 4,
+                    hitRadius: 10,
+                    hoverRadius: 4,
+                  },
+                },
+              }}
+            />
+          }
+        />
+      </CCol>
+      <CCol sm={11} xl={4} xxl={6}>
+        <CWidgetStatsA
+          color="success"
+          value={
+            <>
+              {formatNumber(ingresosData.reduce((acc, item) => acc + item.cantidad, 0))}{' Gs '}
+              <span className="fs-6 fw-normal">
+                <CIcon icon={cilArrowTop} />
+              </span>
+            </>
+          }
+          title="Ingresos"
+          chart={
+            <CChartLine
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '65px' }}
+              data={{
+                labels: ingresosPorMes.map(item => item.mes),
+                datasets: [
+                  {
+                    label: 'Ingreso',
+                    backgroundColor: 'transparent',
+                    borderColor: 'rgba(255,255,255,.55)',
+                    pointBackgroundColor: getStyle('--cui-success'),
+                    data: ingresosPorMes.map(item => item.cantidad),
+                  },
+                ],
+              }}
+              options={{
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    border: {
+                      display: false,
+                    },
+                    grid: {
+                      display: false,
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                  y: {
+                    display: false,
+                    grid: {
+                      display: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                },
+                elements: {
+                  line: {
+                    borderWidth: 1,
+                    tension: 0.4,
+                  },
+                  point: {
+                    radius: 4,
+                    hitRadius: 10,
+                    hoverRadius: 4,
                   },
                 },
               }}
@@ -385,8 +289,9 @@ const WidgetsDropdown = (props) => {
         />
       </CCol>
     </CRow>
-  )
+  );
 }
+
 
 WidgetsDropdown.propTypes = {
   className: PropTypes.string,
