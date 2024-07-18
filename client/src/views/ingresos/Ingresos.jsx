@@ -43,7 +43,9 @@ const Ingresos = () => {
                         });
                     }
 
-                    if (selectedCategory !== '') {
+                    if (selectedCategory === 'Otros') {
+                        filtradoPorFecha = res.data.ingresos;
+                    } else if (selectedCategory !== '') {
                         filtradoPorFecha = filtradoPorFecha.filter((ingreso) => ingreso.categoria === selectedCategory)
                     }
 

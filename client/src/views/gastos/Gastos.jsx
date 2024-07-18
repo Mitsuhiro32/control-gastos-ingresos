@@ -43,7 +43,9 @@ const Gastos = () => {
                         });
                     }
 
-                    if (selectedCategory !== '') {
+                    if (selectedCategory === 'Otros') {
+                        filtradoPorFecha = res.data.gastos;
+                    } else if (selectedCategory !== '') {
                         filtradoPorFecha = filtradoPorFecha.filter(gasto => gasto.categoria === selectedCategory);
                     }
 
@@ -226,7 +228,7 @@ const Gastos = () => {
                                                 value={newCategory}
                                                 onChange={(e) => setNewCategory(e.target.value)}
                                                 onFocus={() => setError('')}
-                                                {...(error && { invalid: true, feedbackInvalid: error })}
+                                                {...(error.categoria && { invalid: true, feedbackInvalid: error.categoria })}
                                             />
                                         </CModalBody>
                                         <CModalFooter>
