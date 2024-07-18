@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import Toastify from 'toastify-js'
+import CIcon from "@coreui/icons-react"
+import { cilFilterX } from "@coreui/icons"
 
 const Ingresos = () => {
     const [selectedCategory, setSelectedCategory] = useState('')
@@ -29,8 +31,23 @@ const Ingresos = () => {
                 }
             })
                 .then((res) => {
-                    console.log(res.data.ingresos)
-                    const agrupadoPorCategoria = res.data.ingresos.reduce((acc, ingreso) => {
+                    const inicio = new Date(selectedStartDate);
+                    const fin = new Date(selectedEndDate);
+                    let filtradoPorFecha = res.data.ingresos;
+
+                    if (selectedStartDate !== '' && selectedEndDate !== '') {
+                        // Filtrar gastos basados en las fechas seleccionadas
+                        filtradoPorFecha = res.data.ingresos.filter((gasto) => {
+                            const fechaIngreso = new Date(gasto.fecha);
+                            return fechaIngreso >= inicio && fechaIngreso <= fin;
+                        });
+                    }
+
+                    if (selectedCategory !== '') {
+                        filtradoPorFecha = filtradoPorFecha.filter((ingreso) => ingreso.categoria === selectedCategory)
+                    }
+
+                    const agrupadoPorCategoria = filtradoPorFecha.reduce((acc, ingreso) => {
                         if (!acc[ingreso.categoria]) {
                             acc[ingreso.categoria] = 0
                         }
@@ -38,7 +55,7 @@ const Ingresos = () => {
                         return acc
                     }, {})
 
-                    const agrupadoPorMes = res.data.ingresos.reduce((acc, ingreso) => {
+                    const agrupadoPorMes = filtradoPorFecha.reduce((acc, ingreso) => {
                         const fecha = new Date(ingreso.fecha)
                         const mes = fecha.toLocaleString('default', { month: 'long' }).charAt(0).toUpperCase() + fecha.toLocaleString('default', { month: 'long' }).slice(1)
                         if (!acc[mes]) {
@@ -63,9 +80,10 @@ const Ingresos = () => {
                             }
                         })
                         .sort((a, b) => {
-                            const monthA = new Date(a.mes + ' 1, 2000');
-                            const monthB = new Date(b.mes + ' 1, 2000');
-                            return monthA - monthB;
+                            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                            const monthAIndex = months.indexOf(a.mes);
+                            const monthBIndex = months.indexOf(b.mes);
+                            return monthAIndex - monthBIndex;
                         });
 
                     setData(ingresos)
@@ -113,16 +131,9 @@ const Ingresos = () => {
                 })
         }
 
-        if (selectedStartDate && selectedEndDate) {
-            const filterData = axiosData().filter((data) => {
-                return data.fecha >= selectedStartDate && data.fecha <= selectedEndDate
-            })
-            setData(filterData)
-        }
-
         axiosData()
         axiosCategories()
-    }, [selectedStartDate, selectedEndDate, contadorCategory, navigate])
+    }, [selectedStartDate, selectedEndDate, contadorCategory, navigate, selectedCategory])
 
     const agregarCategoria = (e) => {
         e.preventDefault()
@@ -252,6 +263,16 @@ const Ingresos = () => {
                                 style={{ display: 'inline-block', width: 'auto', margin: '10px' }}
                                 onChange={(e) => setSelectedEndDate(e.target.value)}
                             />
+                            {selectedCategory !== '' || selectedStartDate !== '' || selectedEndDate !== '' ? (
+                                <CButton color="primary" style={{ marginBottom: '5px' }} onClick={() => {
+                                    setSelectedCategory('')
+                                    setSelectedStartDate('')
+                                    setSelectedEndDate('')
+                                }}>
+                                    <CIcon icon={cilFilterX} className="me-2" />
+                                    Cancelar filtro
+                                </CButton>) : ''
+                            }
                             <br />
                             {data.length > 0 ? (
                                 <>
@@ -292,7 +313,7 @@ const Ingresos = () => {
                                     </CCol>
                                 </>
                             ) : (
-                                <p>No hay registros para mostrar</p>
+                                <span>No hay registros para mostrar</span>
                             )}
                             {/* <CButton
                                 color="primary"

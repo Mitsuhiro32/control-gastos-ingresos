@@ -20,11 +20,11 @@ const PrivateRoute = ({ element }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   
-  /* useEffect(() => {
+  useEffect(() => {
     if (!token) {
       navigate('/login');
     }
-  }, [token, navigate]); */
+  }, [token, navigate]);
   
   axios.interceptors.response.use(
     (response) => {
