@@ -117,36 +117,42 @@ const Dashboard = () => {
             <CCardHeader>Comparación de ingresos e gastos por mes</CCardHeader>
             <CCardBody>
               <CRow>
-                <CCol sm="6">
-                  <CChart
-                    type="bar"
-                    data={{
-                      labels: gastosPorMes.map(gasto => gasto.mes),
-                      datasets: [
-                        {
-                          label: 'Gasto',
-                          backgroundColor: '#FF6384',
-                          data: gastosPorMes.map(gasto => gasto.cantidad)
-                        }
-                      ],
-                    }}
-                  />
-                </CCol>
-                <CCol sm="6">
-                  <CChart
-                    type="bar"
-                    data={{
-                      labels: ingresosPorMes.map(ingreso => ingreso.mes),
-                      datasets: [
-                        {
-                          label: 'Ingreso',
-                          backgroundColor: '#FFCE56',
-                          data: ingresosPorMes.map(ingreso => ingreso.cantidad)
-                        }
-                      ],
-                    }}
-                  />
-                </CCol>
+                {gastosPorMes.length === 0 && ingresosPorMes.length === 0 ? (
+                  <CCol>
+                    <span>No hay datos para mostrar</span>
+                  </CCol>) : (
+                  <>
+                    <CCol sm="6">
+                      <CChart
+                        type="bar"
+                        data={{
+                          labels: gastosPorMes.map(gasto => gasto.mes),
+                          datasets: [
+                            {
+                              label: 'Gastos',
+                              backgroundColor: '#FF6384',
+                              data: gastosPorMes.map(gasto => gasto.cantidad)
+                            }
+                          ],
+                        }}
+                      />
+                    </CCol>
+                    <CCol sm="6">
+                      <CChart
+                        type="bar"
+                        data={{
+                          labels: ingresosPorMes.map(ingreso => ingreso.mes),
+                          datasets: [
+                            {
+                              label: 'Ingresos',
+                              backgroundColor: '#FFCE56',
+                              data: ingresosPorMes.map(ingreso => ingreso.cantidad)
+                            }
+                          ],
+                        }}
+                      />
+                    </CCol>
+                  </>)}
               </CRow>
             </CCardBody>
           </CCard>

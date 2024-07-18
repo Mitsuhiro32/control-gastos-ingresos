@@ -312,7 +312,7 @@ const Gastos = () => {
                                     </CCol>
                                 </>
                             ) : (
-                                <p>No hay registros para mostrar</p>
+                                <span>No hay registros para mostrar</span>
                             )}
                             {/* <CButton
                                 color="primary"
